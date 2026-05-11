@@ -1,5 +1,5 @@
 # --- BUILD STAGE ---
-FROM eclipse-temurin:24-jdk-jammy AS builder
+FROM eclipse-temurin:21-jdk-jammy AS builder
 WORKDIR /app
 
 # Copia archivos de configuración para caché de dependencias
@@ -16,7 +16,7 @@ COPY src src
 RUN ./gradlew bootJar --no-daemon
 
 # --- RUNNER STAGE ---
-FROM eclipse-temurin:24-jre-jammy AS runner
+FROM eclipse-temurin:21-jre-jammy AS runner
 WORKDIR /app
 
 # Copia el JAR generado
