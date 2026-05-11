@@ -27,7 +27,7 @@ class CategoriaService(
     }
 
     @Transactional
-    fun crearCategoria(nombre: String, tipo: String, icono: String, usuarioId: UUID): Categoria {
+    fun crearCategoria(nombre: String, tipo: String, usuarioId: UUID): Categoria {
         // 1. Validar que el tipo sea válido (INGRESO o GASTO) para evitar errores del CHECK en DB
         if (tipo != "INGRESO" && tipo != "GASTO") {
             throw IllegalArgumentException("El tipo de categoría debe ser INGRESO o GASTO")

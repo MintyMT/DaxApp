@@ -30,13 +30,13 @@ class CategoriaController(private val categoriaService: CategoriaService) {
         val cat = categoriaService.crearCategoria(
             request.nombre, request.tipo, request.usuarioId
         )
-        return ResponseEntity.ok(CategoriaResponse(cat.id!!, cat.nombre, cat.tipo, cat.icono, false))
+        return ResponseEntity.ok(CategoriaResponse(cat.id!!, cat.nombre, cat.tipo, esGlobal = false))
     }
 
     @PutMapping("/{id}")
     fun editar(@PathVariable id: UUID, @RequestBody request: EditarCategoriaRequest): ResponseEntity<CategoriaResponse> {
         val cat = categoriaService.editarNombreCategoria(id, request.nuevoNombre, request.usuarioId)
-        return ResponseEntity.ok(CategoriaResponse(cat.id!!, cat.nombre, cat.tipo, cat.icono, false))
+        return ResponseEntity.ok(CategoriaResponse(cat.id!!, cat.nombre, cat.tipo, esGlobal = false))
     }
 
     @DeleteMapping("/{id}")

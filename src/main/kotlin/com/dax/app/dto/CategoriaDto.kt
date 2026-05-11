@@ -21,5 +21,5 @@ data class CategoriaResponse(
     val id: UUID,
     val nombre: String,
     val tipo: String,
-    val esGlobal: Boolean // Para que el frontend sepa si mostrar el botón de editar/borrar
+    val esGlobal: Boolean
 )
