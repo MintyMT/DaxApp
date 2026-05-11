@@ -14,14 +14,14 @@ class CuentaService(
     private val tipoCuentaRepository: TipoCuentaRepository) {
 
 fun calcularBalanceGlobal(usuarioId: UUID): BigDecimal {
-        val listadeCuentas = cuentaRepository.findByUsuarioId(usuarioId)
+        val listadeCuentas = cuentaRepository.findByUsuarioIdAndActivaTrue(usuarioId)
 
         return listadeCuentas
             .map { it.saldo }
             .fold(BigDecimal.ZERO, BigDecimal::add)
     }
     fun obtenerCuentasUsuario(usuarioId: UUID): List<Cuenta> {
-        return cuentaRepository.findByUsuarioId(usuarioId)
+        return cuentaRepository.findByUsuarioIdAndActivaTrue(usuarioId)
     }
 
     @Transactional
@@ -33,10 +33,19 @@ fun calcularBalanceGlobal(usuarioId: UUID): BigDecimal {
             usuarioId = usuarioId,
             nombre = nombre,
             saldo = saldoInicial,
-            tipo = tipoCuenta
+            tipo = tipoCuenta,
+            activa = true
         )
-
         return cuentaRepository.save(nuevaCuenta)
+    }
+
+    @Transactional
+    fun desactivarCuenta(cuentaId: UUID): Cuenta {
+        val cuenta = cuentaRepository.findById(cuentaId)
+            .orElseThrow { RuntimeException("La cuenta no existe") }
+
+        cuenta.activa = false // Simplemente cambiamos el estado
+        return cuentaRepository.save(cuenta)
     }
 
 }

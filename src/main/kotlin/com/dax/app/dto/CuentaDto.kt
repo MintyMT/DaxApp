@@ -16,7 +16,8 @@ data class CuentaResponse(
     val id: UUID,
     val nombre: String,
     val saldo: BigDecimal,
-    val tipoNombre: String // Solo nombre, ya que no hay icono en la entidad
+    val tipoNombre: String,
+    val activa: Boolean
 )
 
 data class BalanceGlobalResponse(

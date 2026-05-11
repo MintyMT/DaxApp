@@ -3,7 +3,9 @@ package com.dax.app.repository
 import com.dax.app.entity.Cuenta
 import com.dax.app.entity.Transaccion
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 import java.time.OffsetDateTime
 
@@ -36,5 +38,7 @@ interface TransaccionRepository : JpaRepository <Transaccion, UUID>{
 
     fun findByCategoriaId(categoriaId: UUID): List<Transaccion>
 
+    @Modifying
+    @Transactional
     fun deleteByUsuarioId(usuarioId: UUID)
 }

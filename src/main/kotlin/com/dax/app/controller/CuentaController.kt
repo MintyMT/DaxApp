@@ -19,7 +19,8 @@ class CuentaController(private val cuentaService: CuentaService) {
                 id = c.id!!,
                 nombre = c.nombre,
                 saldo = c.saldo,
-                tipoNombre = c.tipo?.nombre ?: "Sin tipo" // Ajustado aquí
+                tipoNombre = c.tipo?.nombre ?: "Sin tipo",
+                activa = c.activa
             )
         }
         return ResponseEntity.ok(respuesta)
@@ -41,7 +42,14 @@ class CuentaController(private val cuentaService: CuentaService) {
             id = cuenta.id!!,
             nombre = cuenta.nombre,
             saldo = cuenta.saldo,
-            tipoNombre = cuenta.tipo?.nombre ?: "Sin tipo" // Ajustado aquí
+            tipoNombre = cuenta.tipo?.nombre ?: "Sin tipo",
+            activa = cuenta.activa
         ))
+    }
+
+    @DeleteMapping("/{id}")
+    fun eliminarCuenta(@PathVariable id: UUID): ResponseEntity<Void> {
+        cuentaService.desactivarCuenta(id)
+        return ResponseEntity.noContent().build()
     }
 }

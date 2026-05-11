@@ -2,8 +2,11 @@ package com.dax.app.service
 
 import com.dax.app.entity.Cuenta
 import com.dax.app.entity.Transaccion
+import com.dax.app.repository.CategoriaRepository
 import com.dax.app.repository.CuentaRepository
 import com.dax.app.repository.TransaccionRepository
+import com.dax.app.dto.TransaccionResponse
+import com.dax.app.dto.CategoriaResumenDTO
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
@@ -14,7 +17,8 @@ import java.util.UUID
 @Service
 class TransaccionService(
     private val transaccionRepository: TransaccionRepository,
-    private val cuentaRepository: CuentaRepository
+    private val cuentaRepository: CuentaRepository,
+    private val categoriaRepository: CategoriaRepository
 ) {
     @Transactional
     fun registrarGasto(cuentaId: UUID, monto: BigDecimal, categoriaId: UUID, descripcion: String, fecha: OffsetDateTime, notas: String?) {

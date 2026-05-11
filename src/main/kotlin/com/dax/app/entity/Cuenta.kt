@@ -26,6 +26,9 @@ class Cuenta(
 
     @ManyToOne
     @JoinColumn(name = "tipo_id")
-    val tipo: TipoCuenta? = null // Nueva relación
+    val tipo: TipoCuenta? = null,
+
+    @Column(name = "activa", nullable = false)
+    var activa: Boolean = true
 
 )

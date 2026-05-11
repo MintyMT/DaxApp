@@ -5,6 +5,7 @@ import com.dax.app.repository.UsuarioRepository
 import com.dax.app.repository.TransaccionRepository
 import com.dax.app.repository.CuentaRepository
 import com.dax.app.repository.CategoriaRepository
+import com.dax.app.repository.PresupuestoRepository
 import org.hibernate.type.TrueFalseConverter
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -17,7 +18,8 @@ class UsuarioService(
     private val usuarioRepository: UsuarioRepository,
     private val transaccionRepository: TransaccionRepository,
     private val cuentaRepository: CuentaRepository,
-    private val categoriaRepository: CategoriaRepository
+    private val categoriaRepository: CategoriaRepository,
+    private val presupuestoRepository: PresupuestoRepository
     ) {
 
     @Transactional
@@ -83,6 +85,7 @@ class UsuarioService(
         transaccionRepository.deleteByUsuarioId(usuarioId)
         cuentaRepository.deleteByUsuarioId(usuarioId)
         categoriaRepository.deleteByUsuarioId(usuarioId)
+        presupuestoRepository.deleteByUsuarioId(usuarioId)
         // Finalmente borramos al usuario
         usuarioRepository.deleteById(usuarioId)
         println("Cuenta $usuarioId eliminada definitivamente de Supabase.")

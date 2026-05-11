@@ -361,14 +361,12 @@ Obtiene todas las categorías disponibles para el usuario, incluyendo las global
     "id": "uuid-global-1",
     "nombre": "Alimentación",
     "tipo": "GASTO",
-    "icono": "ic_food",
     "esGlobal": true
   },
   {
     "id": "uuid-personal-1",
     "nombre": "Gimnasio",
     "tipo": "GASTO",
-    "icono": "ic_gym",
     "esGlobal": false
   }
 ]
@@ -387,7 +385,6 @@ Permite al usuario definir sus propias categorías de gasto o ingreso.
 {
   "nombre": "Gimnasio",
   "tipo": "GASTO",
-  "icono": "ic_gym",
   "usuarioId": "uuid-usuario"
 }
 ```
@@ -399,7 +396,6 @@ Permite al usuario definir sus propias categorías de gasto o ingreso.
   "id": "uuid-nueva-categoria",
   "nombre": "Gimnasio",
   "tipo": "GASTO",
-  "icono": "ic_gym",
   "esGlobal": false
 }
 ```
@@ -426,7 +422,6 @@ Actualiza el nombre de una categoría personalizada existente.
   "id": "uuid-categoria-existente",
   "nombre": "Crossfit",
   "tipo": "GASTO",
-  "icono": "ic_gym",
   "esGlobal": false
 }
 ```
