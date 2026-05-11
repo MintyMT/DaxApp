@@ -19,7 +19,6 @@ class CategoriaController(private val categoriaService: CategoriaService) {
                 id = c.id!!,
                 nombre = c.nombre,
                 tipo = c.tipo,
-                icono = c.icono,
                 esGlobal = c.usuarioId == null
             )
         }
@@ -29,7 +28,7 @@ class CategoriaController(private val categoriaService: CategoriaService) {
     @PostMapping
     fun crear(@RequestBody request: NuevaCategoriaRequest): ResponseEntity<CategoriaResponse> {
         val cat = categoriaService.crearCategoria(
-            request.nombre, request.tipo, request.icono, request.usuarioId
+            request.nombre, request.tipo, request.usuarioId
         )
         return ResponseEntity.ok(CategoriaResponse(cat.id!!, cat.nombre, cat.tipo, cat.icono, false))
     }

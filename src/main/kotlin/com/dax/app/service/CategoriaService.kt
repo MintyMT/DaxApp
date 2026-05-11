@@ -41,7 +41,6 @@ class CategoriaService(
         val nuevaCategoria = Categoria(
             nombre = nombre,
             tipo = tipo,
-            icono = icono,
             usuarioId = usuarioId
         )
 

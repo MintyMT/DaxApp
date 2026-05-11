@@ -14,9 +14,6 @@ class Categoria(
     val nombre: String,
 
     @Column(nullable = false)
-    val icono: String, // Aquí guardas el nombre del icono (ej: "ic_food")
-
-    @Column(nullable = false)
     val tipo: String, // "GASTO" o "INGRESO"
 
     @Column(name = "usuario_id", nullable = true)
@@ -30,7 +27,6 @@ class Categoria(
         return Categoria(
             id = this.id, // Mismo UUID de Supabase
             nombre = nuevoNombre, // Único campo que cambia
-            icono = this.icono,
             tipo = this.tipo,
             usuarioId = this.usuarioId
         )

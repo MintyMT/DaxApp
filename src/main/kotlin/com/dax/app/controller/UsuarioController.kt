@@ -29,11 +29,4 @@ class UsuarioController(private val usuarioService: UsuarioService) {
         return ResponseEntity.ok("Proceso de borrado iniciado. Tienes 3 minutos para arrepentirte e iniciar sesión.")
     }
 
-    // Endpoint adicional por si quieres ver el estado de un usuario manualmente
-    @GetMapping("/{id}")
-    fun obtenerPerfil(@PathVariable id: UUID): ResponseEntity<UsuarioResponse> {
-        // Aquí podrías llamar a un método del service para buscar por ID
-        // Por simplicidad de la estructura actual, devolvemos un 200 OK simbólico
-        return ResponseEntity.status(501).build() // 501 Not Implemented aún
-    }
 }

@@ -7,7 +7,6 @@ import java.util.UUID
 data class NuevaCategoriaRequest(
     val nombre: String,
     val tipo: String, // "INGRESO" o "GASTO"
-    val icono: String,
     val usuarioId: UUID
 )
 
@@ -22,6 +21,5 @@ data class CategoriaResponse(
     val id: UUID,
     val nombre: String,
     val tipo: String,
-    val icono: String,
     val esGlobal: Boolean // Para que el frontend sepa si mostrar el botón de editar/borrar
 )
