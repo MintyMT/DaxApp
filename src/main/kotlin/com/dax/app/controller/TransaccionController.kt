@@ -87,4 +87,15 @@ class TransaccionController(private val transaccionService: TransaccionService) 
         val flujo = transaccionService.obtenerFlujoCaja(usuarioId, fechaInicio, fechaFin)
         return ResponseEntity.ok(flujo)
     }
+
+    @GetMapping("/total-por-rango")
+    fun obtenerTotalPorRango(
+        @RequestParam usuarioId: UUID,
+        @RequestParam tipo: String,
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) fechaInicio: OffsetDateTime,
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) fechaFin: OffsetDateTime
+    ): ResponseEntity<BigDecimal> {
+        val total = transaccionService.obtenerTotalPorRango(usuarioId, tipo , fechaInicio, fechaFin)
+        return ResponseEntity.ok(total)
+    }
 }

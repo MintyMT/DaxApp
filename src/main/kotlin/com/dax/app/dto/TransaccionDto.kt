@@ -25,6 +25,12 @@ data class TransferenciaRequest(
 )
 
 // --- RESPONSES ---
+data class TotalPorRangoResponse (
+    val usuarioId: UUID,
+    val tipo: String,
+    val fechaInicio: OffsetDateTime,
+    val fechaFin: OffsetDateTime
+)
 
 data class TransaccionResponse(
     val id: UUID,

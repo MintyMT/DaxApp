@@ -151,41 +151,6 @@ class TransaccionService(
     }
 
     @Transactional
-    fun eliminarCuentaYReajustarSaldos(cuentaId: UUID) {
-        val cuentaAEliminar = cuentaRepository.findById(cuentaId)
-            .orElseThrow { RuntimeException("La cuenta no existe") }
-
-        // 1. Buscar todas las transferencias donde esta cuenta estuvo involucrada
-        // Para reajustar el saldo de la "otra" cuenta que NO se va a borrar.
-        val transaccionesRelacionadas = transaccionRepository.findByCuentaOrigenIdOrCuentaDestinoId(cuentaId, cuentaId)
-
-        transaccionesRelacionadas.forEach { tx ->
-            if (tx.tipo == "TRANSFERENCIA") {
-                if (tx.cuentaOrigen?.id == cuentaId) {
-                    // Si la cuenta que borramos fue el ORIGEN, el dinero "vuelve" al destino
-                    // Pero como la cuenta destino es la que se queda, debemos restarle lo que recibió
-                    tx.cuentaDestino?.let { destino ->
-                        destino.saldo = destino.saldo.subtract(tx.monto)
-                        cuentaRepository.save(destino)
-                    }
-                } else if (tx.cuentaDestino?.id == cuentaId) {
-                    // Si la cuenta que borramos fue el DESTINO, el dinero "regresa" al origen
-                    tx.cuentaOrigen?.let { origen ->
-                        origen.saldo = origen.saldo.add(tx.monto)
-                        cuentaRepository.save(origen)
-                    }
-                }
-            }
-        }
-
-        // 2. Eliminar todas las transacciones relacionadas
-        // Esto limpia Gastos, Ingresos y Transferencias de esta cuenta
-        transaccionRepository.deleteAll(transaccionesRelacionadas)
-
-        // 3. Finalmente, eliminar la cuenta
-        cuentaRepository.delete(cuentaAEliminar)
-    }
-
     fun obtenerTransaccionesFiltradas(
         usuarioId: UUID,
         tipo: String?,

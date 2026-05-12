@@ -83,10 +83,10 @@ Inicia el protocolo de eliminación de cuenta con un periodo de gracia.
 ---
 
 ## 🏦 Módulo: Cuentas
-Gestión de billeteras, bancos y activos financieros de los usuarios.
+Gestión de billeteras, bancos y activos financieros de los usuarios, incluyendo su estado de actividad.
 
 ### 1. Crear Nueva Cuenta
-Permite al usuario registrar una nueva fuente de dinero (Efectivo, Banco, Ahorros, etc.).
+Permite al usuario registrar una nueva fuente de dinero (Efectivo, Banco, Ahorros, etc.). Por defecto, la cuenta se crea como **activa**.
 *   **Método:** `POST`
 *   **URL:** `/api/cuentas`
 
@@ -107,14 +107,15 @@ Permite al usuario registrar una nueva fuente de dinero (Efectivo, Banco, Ahorro
   "id": "a1b2c3d4-e5f6-7890-abcd-1234567890ef",
   "nombre": "Banco Pichincha",
   "saldo": 1500.00,
-  "tipoNombre": "Banco"
+  "tipoNombre": "Banco",
+  "activa": true
 }
 ```
 
 ---
 
 ### 2. Listar Cuentas por Usuario
-Obtiene todas las cuentas registradas de un usuario específico.
+Obtiene todas las cuentas **activas** registradas de un usuario específico.
 *   **Método:** `GET`
 *   **URL:** `/api/cuentas/usuario/{usuarioId}`
 
@@ -129,13 +130,15 @@ Obtiene todas las cuentas registradas de un usuario específico.
     "id": "uuid-1",
     "nombre": "Efectivo",
     "saldo": 50.75,
-    "tipoNombre": "Efectivo"
+    "tipoNombre": "Efectivo",
+    "activa": true
   },
   {
     "id": "uuid-2",
     "nombre": "Banco Pichincha",
     "saldo": 1500.00,
-    "tipoNombre": "Banco"
+    "tipoNombre": "Banco",
+    "activa": true
   }
 ]
 ```
@@ -143,7 +146,7 @@ Obtiene todas las cuentas registradas de un usuario específico.
 ---
 
 ### 3. Obtener Balance Global
-Calcula la suma total del dinero disponible en todas las cuentas de un usuario.
+Calcula la suma total del dinero disponible en todas las cuentas **activas** de un usuario.
 *   **Método:** `GET`
 *   **URL:** `/api/cuentas/usuario/{usuarioId}/balance`
 
@@ -152,6 +155,31 @@ Calcula la suma total del dinero disponible en todas las cuentas de un usuario.
 ```json
 {
   "balanceTotal": 1550.75
+}
+```
+
+---
+
+### 4. Desactivar Cuenta (Borrado Lógico)
+Cambia el estado de una cuenta a inactiva. Las transacciones históricas se mantienen, pero la cuenta no aparecerá en listados activos ni permitirá nuevas operaciones.
+*   **Método:** `DELETE`
+*   **URL:** `/api/cuentas/{id}?usuarioId={usuarioId}`
+
+**Parámetros de Ruta:**
+*   `id` (UUID): El identificador único de la cuenta a desactivar.
+
+**Parámetros de Consulta (Query Params):**
+*   `usuarioId` (UUID): El identificador del usuario propietario de la cuenta.
+
+**Respuesta Exitosa (Success Response):**
+*   **Código:** `200 OK`
+```json
+{
+  "id": "uuid-cuenta-desactivada",
+  "nombre": "Cuenta Inactiva",
+  "saldo": 0.00,
+  "tipoNombre": "Banco",
+  "activa": false
 }
 ```
 
@@ -439,3 +467,144 @@ Borra una categoría creada por el usuario y reasigna automáticamente sus trans
 "Categoría eliminada. Las transacciones se movieron a categorías del sistema."
 ```
 > **Lógica de Reasignación:** Al eliminar una categoría, el sistema busca todas las transacciones vinculadas y las mueve a la categoría global **"Otros Gastos"** u **"Otros Ingresos"** según corresponda, para evitar la pérdida de integridad financiera.
+
+---
+
+## 💰 Módulo: Presupuestos
+Gestión y seguimiento de los límites de gasto definidos por el usuario.
+
+### 1. Definir Presupuesto Global
+Establece o actualiza el monto total del presupuesto mensual para un usuario.
+*   **Método:** `POST`
+*   **URL:** `/api/presupuestos`
+
+**Cuerpo de la Petición (Request Body):**
+```json
+{
+  "usuarioId": "uuid-del-usuario",
+  "montoTotal": 1000.00
+}
+```
+| Campo | Tipo | Descripción |
+| :--- | :--- | :--- |
+| **usuarioId** | UUID | Identificador del usuario al que se asigna el presupuesto. |
+| **montoTotal** | BigDecimal | Monto total del presupuesto para el mes. |
+
+**Respuesta Exitosa (Success Response):**
+*   **Código:** `200 OK`
+```json
+{
+  "id": "uuid-presupuesto",
+  "usuarioId": "uuid-del-usuario",
+  "montoTotal": 1000.00,
+  "fechaCreacion": "2024-05-21T10:00:00Z"
+}
+```
+
+---
+
+### 2. Obtener Presupuesto Global
+Recupera el presupuesto global definido para un usuario.
+*   **Método:** `GET`
+*   **URL:** `/api/presupuestos/{usuarioId}`
+
+**Parámetros de Ruta:**
+*   `usuarioId` (UUID): Identificador del usuario.
+
+**Respuesta Exitosa (Success Response):**
+*   **Código:** `200 OK`
+```json
+{
+  "id": "uuid-presupuesto",
+  "usuarioId": "uuid-del-usuario",
+  "montoTotal": 1000.00,
+  "fechaCreacion": "2024-05-21T10:00:00Z"
+}
+```
+
+**Posibles Errores:**
+*   `404 Not Found`: Si no existe un presupuesto definido para el `usuarioId` proporcionado.
+
+---
+
+### 3. Obtener Resumen de Gastos por Categoría
+Proporciona un resumen detallado de los gastos por categoría dentro de un período, útil para el seguimiento del presupuesto.
+*   **Método:** `GET`
+*   **URL:** `/api/presupuestos/resumen-presupuesto`
+
+**Parámetros de Consulta (Query Params):**
+| Parámetro | Requerido | Descripción |
+| :--- | :--- | :--- |
+| **usuarioId** | Sí | UUID del usuario. |
+| **fechaInicio** | Sí | Fecha de inicio del período (ISO 8601). |
+| **fechaFin** | Sí | Fecha de fin del período (ISO 8601). |
+
+**Respuesta Exitosa (Success Response):**
+*   **Código:** `200 OK`
+```json
+{
+  "presupuestoRestante": 750.00,
+  "categorias": [
+    {
+      "categoriaId": "uuid-categoria-comida",
+      "nombreCategoria": "Comida",
+      "totalGastado": 150.00,
+      "ultimasTres": [
+        {
+          "id": "uuid-transaccion-1",
+          "monto": 50.00,
+          "tipo": "GASTO",
+          "descripcion": "Almuerzo",
+          "fecha": "2024-05-20T13:00:00Z",
+          "categoriaId": "uuid-categoria-comida",
+          "nombreCuentaOrigen": "Efectivo",
+          "nombreCuentaDestino": null,
+          "notas": null
+        },
+        {
+          "id": "uuid-transaccion-2",
+          "monto": 75.00,
+          "tipo": "GASTO",
+          "descripcion": "Cena",
+          "fecha": "2024-05-19T20:00:00Z",
+          "categoriaId": "uuid-categoria-comida",
+          "nombreCuentaOrigen": "Tarjeta",
+          "nombreCuentaDestino": null,
+          "notas": "Restaurante"
+        },
+        {
+          "id": "uuid-transaccion-3",
+          "monto": 25.00,
+          "tipo": "GASTO",
+          "descripcion": "Café",
+          "fecha": "2024-05-19T09:00:00Z",
+          "categoriaId": "uuid-categoria-comida",
+          "nombreCuentaOrigen": "Efectivo",
+          "nombreCuentaDestino": null,
+          "notas": null
+        }
+      ]
+    },
+    {
+      "categoriaId": "uuid-categoria-transporte",
+      "nombreCategoria": "Transporte",
+      "totalGastado": 100.00,
+      "ultimasTres": [
+        {
+          "id": "uuid-transaccion-4",
+          "monto": 100.00,
+          "tipo": "GASTO",
+          "descripcion": "Gasolina",
+          "fecha": "2024-05-18T15:00:00Z",
+          "categoriaId": "uuid-categoria-transporte",
+          "nombreCuentaOrigen": "Tarjeta",
+          "nombreCuentaDestino": null,
+          "notas": null
+        }
+      ]
+    }
+  ]
+}
+```
+
+---
