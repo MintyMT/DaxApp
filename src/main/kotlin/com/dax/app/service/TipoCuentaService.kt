@@ -8,10 +8,8 @@ import java.util.UUID
 @Service
 class TipoCuentaService(private val tipoCuentaRepository: TipoCuentaRepository) {
 
-    /**
-     * Este es el catálogo que el frontend pedirá apenas el usuario
-     * quiera crear una cuenta nueva para llenar el selector.
-     */
+    
+
     fun obtenerTodos(): List<TipoCuenta> {
         return tipoCuentaRepository.findAll()
     }

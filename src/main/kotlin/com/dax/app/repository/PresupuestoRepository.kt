@@ -9,10 +9,8 @@ import java.util.UUID
 
 @Repository
 interface PresupuestoRepository : JpaRepository<Presupuesto, UUID> {
-    // Busca el presupuesto único asignado a un usuario
     fun findByUsuarioId(usuarioId: UUID): Presupuesto?
 
-    //Elimina el presupuesto por el id del usuario
     @Modifying
     @Transactional
     fun deleteByUsuarioId(usuarioId: UUID)

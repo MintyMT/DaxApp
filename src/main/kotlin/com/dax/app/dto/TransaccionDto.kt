@@ -4,7 +4,6 @@ import java.math.BigDecimal
 import java.time.OffsetDateTime
 import java.util.UUID
 
-// --- REQUESTS ---
 
 data class GastoIngresoRequest(
     val cuentaId: UUID,
@@ -24,7 +23,6 @@ data class TransferenciaRequest(
     val notas: String?
 )
 
-// --- RESPONSES ---
 data class TotalPorRangoResponse (
     val usuarioId: UUID,
     val tipo: String,

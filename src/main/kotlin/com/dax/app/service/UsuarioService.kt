@@ -31,7 +31,7 @@ class UsuarioService(
         val nuevoUsuario = Usuario(
             nombre = nombre,
             email = email,
-            password = contra // En el futuro aquí aplicarás hashing
+            password = contra 
         )
 
         return usuarioRepository.save(nuevoUsuario)
@@ -46,7 +46,7 @@ class UsuarioService(
         }
 
         if (usuario.fechaSolicitudBorrado != null) {
-            usuario.fechaSolicitudBorrado = null // Limpiamos la marca de tiempo
+            usuario.fechaSolicitudBorrado = null 
             usuarioRepository.save(usuario)
             println("¡Bienvenido de nuevo! Tu solicitud de borrado ha sido cancelada.")
         }
@@ -59,19 +59,19 @@ class UsuarioService(
         val usuario = usuarioRepository.findById(usuarioId)
             .orElseThrow { RuntimeException("Usuario no encontrado") }
 
-        // Iniciamos el cronómetro de 3 minutos para la clase
+        
         usuario.fechaSolicitudBorrado = OffsetDateTime.now()
         usuarioRepository.save(usuario)
         println("Borrado solicitado para ${usuario.id}. Se eliminará en 3 minutos.")
     }
 
-    // Tarea programada que corre cada minuto revisando quién debe ser borrado
-    @Scheduled(fixedDelay = 60000) // 60 segundos
+    
+    @Scheduled(fixedDelay = 60000) 
     @Transactional
     fun ejecutarLimpiezaDeCuentas() {
         val limiteTiempo = OffsetDateTime.now().minusMinutes(3)
 
-        // Buscamos usuarios que solicitaron borrar hace más de 3 minutos
+        
         val usuariosParaEliminar = usuarioRepository.findByFechaSolicitudBorradoBefore(limiteTiempo)
 
         usuariosParaEliminar.forEach { usuario ->
@@ -81,12 +81,12 @@ class UsuarioService(
 
     @Transactional
     fun eliminarTodoLoRelacionado(usuarioId: UUID) {
-        // El orden es CRÍTICO por las llaves foráneas en PostgreSQL
+        
         transaccionRepository.deleteByUsuarioId(usuarioId)
         cuentaRepository.deleteByUsuarioId(usuarioId)
         categoriaRepository.deleteByUsuarioId(usuarioId)
         presupuestoRepository.deleteByUsuarioId(usuarioId)
-        // Finalmente borramos al usuario
+
         usuarioRepository.deleteById(usuarioId)
         println("Cuenta $usuarioId eliminada definitivamente de Supabase.")
     }

@@ -44,7 +44,7 @@ fun calcularBalanceGlobal(usuarioId: UUID): BigDecimal {
         val cuenta = cuentaRepository.findById(cuentaId)
             .orElseThrow { RuntimeException("La cuenta no existe") }
 
-        cuenta.activa = false // Simplemente cambiamos el estado
+        cuenta.activa = false
         return cuentaRepository.save(cuenta)
     }
 

@@ -17,16 +17,13 @@ class Categoria(
     val tipo: String, // "GASTO" o "INGRESO"
 
     @Column(name = "usuario_id", nullable = true)
-    val usuarioId: UUID? = null // Null = Global, Con valor = Privada
+    val usuarioId: UUID? = null
 ){
-    /**
-     * Crea una copia de la categoría con un nuevo nombre.
-     * Mantiene el ID y el usuarioId originales para que JPA realice un UPDATE.
-     */
+
     fun copiarConNuevoNombre(nuevoNombre: String): Categoria {
         return Categoria(
-            id = this.id, // Mismo UUID de Supabase
-            nombre = nuevoNombre, // Único campo que cambia
+            id = this.id,
+            nombre = nuevoNombre,
             tipo = this.tipo,
             usuarioId = this.usuarioId
         )

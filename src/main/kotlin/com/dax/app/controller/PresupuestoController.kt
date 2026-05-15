@@ -37,7 +37,6 @@ class PresupuestoController(
         }
     }
 
-
     @GetMapping("/resumen-presupuesto")
     fun obtenerResumenPresupuesto(
         @RequestParam usuarioId: UUID,

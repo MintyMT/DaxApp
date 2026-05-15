@@ -22,20 +22,20 @@ class TransaccionService(
 ) {
     @Transactional
     fun registrarGasto(cuentaId: UUID, monto: BigDecimal, categoriaId: UUID, descripcion: String, fecha: OffsetDateTime, notas: String?) {
-        // 1. BUSCAR
+        
         val cuenta = cuentaRepository.findById(cuentaId)
             .orElseThrow { RuntimeException("La cuenta no existe") }
 
-        // 2. VALIDAR
+        
         if (cuenta.saldo < monto) {
             throw RuntimeException("Saldo insuficiente en la cuenta: ${cuenta.nombre}")
         }
 
-        // 3. EJECUTAR
+        
         cuenta.saldo = cuenta.saldo.subtract(monto)
         cuentaRepository.save(cuenta)
 
-        // 4. REGISTRAR: Crear el historial en la tabla transacciones
+        
         val gasto = Transaccion(
             usuarioId = cuenta.usuarioId,
             cuentaOrigen = cuenta,
@@ -56,11 +56,11 @@ class TransaccionService(
         val cuenta = cuentaRepository.findById(cuentaId)
             .orElseThrow { RuntimeException("La cuenta no existe") }
 
-        // Sumar el dinero
+        
         cuenta.saldo = cuenta.saldo.add(monto)
         cuentaRepository.save(cuenta)
 
-        // Crear el registro (cuentaOrigen es null porque el dinero viene de fuera)
+        
         val ingreso = Transaccion(
             usuarioId = cuenta.usuarioId,
             cuentaOrigen = null,
@@ -113,28 +113,28 @@ class TransaccionService(
 
     @Transactional
     fun eliminarTransaccion(transaccionId: UUID) {
-        // 1. Buscar la transacción
+        
         val tx = transaccionRepository.findById(transaccionId)
             .orElseThrow { RuntimeException("La transacción no existe") }
 
-        // 2. Reajustar saldos según el tipo
+        
         when (tx.tipo) {
             "GASTO" -> {
-                // El dinero regresa a la cuenta de origen
+                
                 tx.cuentaOrigen?.let { cuenta ->
                     cuenta.saldo = cuenta.saldo.add(tx.monto)
                     cuentaRepository.save(cuenta)
                 }
             }
             "INGRESO" -> {
-                // El dinero se resta de la cuenta donde ingresó (cuentaDestino)
+                
                 tx.cuentaDestino?.let { cuenta ->
                     cuenta.saldo = cuenta.saldo.subtract(tx.monto)
                     cuentaRepository.save(cuenta)
                 }
             }
             "TRANSFERENCIA" -> {
-                // El dinero sale del destino y regresa al origen
+                
                 tx.cuentaDestino?.let { destino ->
                     destino.saldo = destino.saldo.subtract(tx.monto)
                     cuentaRepository.save(destino)
@@ -146,7 +146,7 @@ class TransaccionService(
             }
         }
 
-        // 3. Borrar la transacción físicamente
+        
         transaccionRepository.delete(tx)
     }
 
@@ -161,7 +161,7 @@ class TransaccionService(
     ): List<Transaccion> {
 
         val lista = when {
-            // CASO: Filtro por Cuenta específica (Detalle de cuenta)
+            
             cuentaId != null -> {
                 val comoOrigen = transaccionRepository.findByUsuarioIdAndCuentaOrigenIdAndFechaBetweenOrderByFechaDesc(
                     usuarioId, cuentaId, fechaInicio, fechaFin
@@ -169,18 +169,18 @@ class TransaccionService(
                 val comoDestino = transaccionRepository.findByUsuarioIdAndCuentaDestinoIdAndFechaBetweenOrderByFechaDesc(
                     usuarioId, cuentaId, fechaInicio, fechaFin
                 )
-                // Unimos ambas listas y ordenamos por fecha (por si hay transferencias o ingresos)
+                
                 (comoOrigen + comoDestino).distinctBy { it.id }.sortedByDescending { it.fecha }
             }
 
-            // CASO: Filtro por Tipo (Gasto/Ingreso)
+            
             tipo != null && tipo != "ALL" -> {
                 transaccionRepository.findByUsuarioIdAndTipoAndFechaBetweenOrderByFechaDesc(
                     usuarioId, tipo, fechaInicio, fechaFin
                 )
             }
 
-            // CASO: General (Dashboard)
+            
             else -> {
                 transaccionRepository.findByUsuarioIdAndFechaBetweenOrderByFechaDesc(
                     usuarioId, fechaInicio, fechaFin
